@@ -4,8 +4,9 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 /*heёllo world by as-pasa*/
 public final class Bot extends TelegramLongPollingBot{
     public static void main(String[] args) {
-        System.out.println("Test commit");
+        System.out.println(System.getenv("test"));
     }
+
     @Override
     public String getBotUsername() {
         return null;
