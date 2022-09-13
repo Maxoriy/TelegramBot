@@ -1,7 +1,7 @@
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-
+/*hello world by as-pasa*/
 public final class Bot extends TelegramLongPollingBot{
 
     @Override
