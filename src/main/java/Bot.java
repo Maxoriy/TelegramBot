@@ -1,6 +1,5 @@
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
@@ -31,18 +30,10 @@ public final class Bot extends TelegramLongPollingBot {
             String MessageText = update.getMessage().getText();
             long chatId = update.getMessage().getChatId();
 
-
             switch (MessageText){
-                case "/start":
-                    startCommandReceived(chatId, update.getMessage().getChat().getFirstName());
-                    break;
-
-                case "/help":
-                    helpCommandReceived(chatId);
-                    break;
-
-                default:
-                    SendMessage(chatId, update.getMessage().getText());
+                case "/start" -> startCommandReceived(chatId, update.getMessage().getChat().getFirstName());
+                case "/help" -> helpCommandReceived(chatId);
+                default -> SendMessage(chatId, update.getMessage().getText());
             }
         }
     }
