@@ -1,4 +1,6 @@
-public class Tool implements ITool{
+import interfaces.ITool;
+
+public class Tool implements ITool {
     private String _name;
     private String _descr;
 

@@ -8,12 +8,12 @@ public final class Bot extends TelegramLongPollingBot {
 
     private final String BOT_TOKEN;
     private final String BOT_NAME;
-    private int counter;
+
     public Bot(String BOT_NAME, String BOT_TOKEN) {
         super();
         this.BOT_NAME = BOT_NAME;
         this.BOT_TOKEN = BOT_TOKEN;
-        counter=0;
+
     }
 
     @Override
@@ -29,7 +29,7 @@ public final class Bot extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
         if (update.hasMessage() && update.getMessage().hasText()){
-            counter++;
+
             String MessageText = update.getMessage().getText();
             long chatId = update.getMessage().getChatId();
 
@@ -55,7 +55,7 @@ public final class Bot extends TelegramLongPollingBot {
     private void SendMessage(long chatId, String TextToSend){
         SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(chatId));
-        message.setText(TextToSend+ String.valueOf(counter));
+        message.setText(TextToSend);
 
         try{
             execute(message);
