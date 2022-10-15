@@ -1,6 +1,7 @@
 import com.opencsv.CSVReader;
 import org.checkerframework.checker.units.qual.A;
 
+import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 
@@ -38,14 +39,14 @@ public class test {
 
     public static void main(String[] args) {
 
-        CsvTest();
-        SQLTest();
+        File file=new File("BarBarA.csv");
+        System.out.println(file.getName());
     }
     public static void CsvTest(){
         data=new ArrayList<>();
         ArrayList<String> initstr=new ArrayList<>();
         try{
-            FileReader fileReader = new FileReader("C:/Users/as-pa/IdeaProjects/TelegramBot/src/main/java/Варвар.csv");
+            FileReader fileReader = new FileReader("C:/Users/as-pa/IdeaProjects/TelegramBot/src/main/java/BarBarA.csv");
             CSVReader csvREader= new CSVReader(fileReader);
             String[] nextRecord;
             while((nextRecord= csvREader.readNext())!=null){
