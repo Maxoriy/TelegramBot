@@ -1,4 +1,5 @@
 import com.opencsv.CSVReader;
+import interfaces.DataBaseManager;
 import org.checkerframework.checker.units.qual.A;
 
 import java.io.File;
@@ -15,8 +16,6 @@ public class test {
     private static void SQLTest(){
     try{
         Connection myConn=DriverManager.getConnection("jdbc:mysql://localhost:3306/dndtest","root","@Cryptec03");
-
-
         for(Abilities a:data){
             PreparedStatement stmt =myConn.prepareStatement("insert into abilities(name,description,abilityLevel,SourceId) values(?,?,?,?)");
             stmt.setString(1,a.name);
@@ -25,22 +24,15 @@ public class test {
             stmt.setString(4,"1");
             stmt.executeUpdate();
         }
-
-        
-
-
-
     }
     catch(Exception exc){
         exc.printStackTrace();
 
     }
 }
-
     public static void main(String[] args) {
 
-        File file=new File("BarBarA.csv");
-        System.out.println(file.getName());
+
     }
     public static void CsvTest(){
         data=new ArrayList<>();

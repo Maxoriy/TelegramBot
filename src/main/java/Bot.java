@@ -1,5 +1,6 @@
+import PlayerManagement.PlayerQuestion;
 import PlayerManagement.PlayerQuestionManager;
-import PlayerManagement.UserHandler;
+import interfaces.UserAnswer;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -20,7 +21,6 @@ public final class Bot extends TelegramLongPollingBot {
         this.BOT_NAME = BOT_NAME;
         this.BOT_TOKEN = BOT_TOKEN;
         this.users=new HashMap<>();
-
     }
 
     @Override
@@ -43,7 +43,7 @@ public final class Bot extends TelegramLongPollingBot {
             switch (MessageText) {
                 case "/start" -> startCommandReceived(chatId, update.getMessage().getChat().getFirstName());
                 case "/help" -> helpCommandReceived(chatId);
-                default -> HandleReaction(chatId,update);
+                default -> HandleReaction(new DefaultUserAnswer(chatId,MessageText));
             }
         }
     }
@@ -65,20 +65,32 @@ public final class Bot extends TelegramLongPollingBot {
         catch (TelegramApiException e){
             e.printStackTrace();
         }
-
     }
-    private void HandleReaction(long chatid, Update update){
-       int code=  users.get(chatid).HandleReaction(update);
+    private void HandleReaction(UserAnswer entry){
+       int code=  users.get(entry.GetChatId()).HandleReaction(entry);
 
        if(code==0){
-           FileSendCommand(chatid);
-            users.remove(chatid);
+           FileSendCommand(entry.GetChatId());
+            users.remove(entry.GetChatId());
+       }
+       if(code==-1){
+           SendText(entry.GetChatId(),"Недопустимый вариант ответа");
        }
        else{
-           SendText(chatid, users.get(chatid).GetQuestionToAskText());
+           String dd=ConvertQuestionToString(users.get(entry.GetChatId()).GetCurrentQuestion());
+           SendText(entry.GetChatId(), dd);
        }
     }
-
+    private String ConvertQuestionToString(PlayerQuestion ques){
+        StringBuilder b=new StringBuilder();
+        b.append(ques.GetQuestionName());
+        b.append("\n");
+        for (String a:ques.GetOptions()) {
+            b.append(a);
+            b.append("\n");
+        }
+        return b.toString();
+    }
     private void helpCommandReceived(long chatId) {
         String answer = "In the future, here will be the help for working with the bot!";
         SendText(chatId, answer);
@@ -86,7 +98,9 @@ public final class Bot extends TelegramLongPollingBot {
     private void startCommandReceived(long chatId, String name) {
         SendText(chatId,"recieved");
          users.put(chatId,new PlayerQuestionManager());
-        SendText(chatId, users.get(chatId).GetQuestionToAskText());
+
+        String dd=ConvertQuestionToString(users.get(chatId).GetCurrentQuestion());
+        SendText(chatId, dd);
     }
     private void SendText(long chatId, String TextToSend){
         SendMessage message = new SendMessage();

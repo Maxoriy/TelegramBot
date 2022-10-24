@@ -1,45 +1,49 @@
 package PlayerManagement;
 
+import interfaces.DataBaseManager;
+
+import java.sql.SQLOutput;
 import java.util.ArrayList;
+import java.util.function.Consumer;
 
 public class ClassQuestions implements PlayerQuestionIterator{
-    ArrayList<String> QuestionNames;
-    ArrayList<ArrayList<String>> qoptions;
+    String qname;
+    private String className;
+    ArrayList<String> qoptions;
+    public void SetClass(String s){
+        className=s;
+    };
     public ClassQuestions(){
-        QuestionNames=new ArrayList<>();
-        QuestionNames.add("ques1");
-        QuestionNames.add("ques2");
-        QuestionNames.add("ques3");
-        qoptions=new ArrayList<>();
-        ArrayList<String> inf=new ArrayList<>();
-        inf.add("ques1option1");
-        inf.add("ques1option2");
-        inf.add("ques1option3");
-        qoptions.add(inf);
-        ArrayList<String> inf2=new ArrayList<>();
-        inf2.add("ques2option1");
-        inf2.add("ques2option2");
-        inf2.add("ques2option3");
-        qoptions.add(inf2);
-        ArrayList<String> inf3=new ArrayList<>();
-        inf3.add("ques3option1");
-        inf3.add("ques3option2");
-        inf3.add("ques3option3");
-        qoptions.add(inf3);
+        qname="Выберите класс персонажа";
+        qoptions= DataBaseManager.getInstance().GetDataFromDB("select * from classes");
     }
-    int currentQuest=0;
+    boolean myQyestionIsAnswered=false;
     @Override
     public PlayerQuestion AskQuestion() {
-        return new PlayerQuestion(QuestionNames.get(currentQuest),qoptions.get(currentQuest));
+        return new PlayerQuestion(qname,qoptions, new InputReader(this::SetClass));
     }
-
     @Override
     public void NextQuestion() {
-        currentQuest++;
+        myQyestionIsAnswered=true;
     }
-
     @Override
     public boolean IsOver() {
-        return currentQuest>=QuestionNames.size();
+        System.out.println("answer");
+        System.out.println(className);
+        return myQyestionIsAnswered;
     }
 }
+
+
+class InputReader {
+    private Consumer<String> callback;
+
+    public InputReader(Consumer<String> callback) {
+        this.callback = callback;
+    }
+    public void onInput(String s) {
+        callback.accept(s);
+    }
+}
+
+
