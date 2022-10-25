@@ -1,6 +1,7 @@
 package PlayerManagement;
 
 import interfaces.DataBaseManager;
+import interfaces.ITool;
 
 import java.sql.SQLOutput;
 import java.util.ArrayList;
@@ -9,13 +10,18 @@ import java.util.function.Consumer;
 public class ClassQuestions implements PlayerQuestionIterator{
     String qname;
     private String className;
-    ArrayList<String> qoptions;
-    public void SetClass(String s){
-        className=s;
-    };
+    private ArrayList<ITool> FeaturesAndTraits;
+    private ArrayList<String> qoptions;
+
     public ClassQuestions(){
         qname="Выберите класс персонажа";
         qoptions= DataBaseManager.getInstance().GetDataFromDB("select * from classes");
+    }
+    public void SetClass(String s){
+        className=s;
+    };
+    public void SetFeaturesAndTraits(ArrayList<ITool> data){
+        FeaturesAndTraits=data;
     }
     boolean myQyestionIsAnswered=false;
     @Override
