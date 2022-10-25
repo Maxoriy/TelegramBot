@@ -3,42 +3,65 @@ package PlayerManagement;
 import interfaces.DataBaseManager;
 import interfaces.ITool;
 
-import java.sql.SQLOutput;
 import java.util.ArrayList;
+import java.util.Queue;
 import java.util.function.Consumer;
 
 public class ClassQuestions implements PlayerQuestionIterator{
-    String qname;
+
     private String className;
+    private String subClass;
     private ArrayList<ITool> FeaturesAndTraits;
-    private ArrayList<String> qoptions;
+    private int statecounter;
+
+    private PlayerQuestion CreateClassNameQuestion(){
+        return new PlayerQuestion("Выберите класс персонажа",DataBaseManager.getInstance().GetDataFromDB("select * from classes"),new InputReader(this::SetClass));
+    }
+    private PlayerQuestion CreateSubClassesQuestion(){
+        String statement=String.format("""
+                select classes.name, subclasses.name
+                from classes
+                join ClassToSubClass on classes.classId = ClassToSubClass.ClassId
+                join subclasses on classtosubclass.SubClassId=subclasses.classId
+                where classes.name="%s";""",className);
+        return new PlayerQuestion("Выберите подкласс своего персонажа из представленных",DataBaseManager.getInstance().GetDataFromDB(statement),new InputReader(this::SetSubClass));
+    }
 
     public ClassQuestions(){
-        qname="Выберите класс персонажа";
-        qoptions= DataBaseManager.getInstance().GetDataFromDB("select * from classes");
+        statecounter=0;
     }
     public void SetClass(String s){
         className=s;
     };
+    public void SetSubClass(String s){
+        subClass=s;
+    }
+
     public void SetFeaturesAndTraits(ArrayList<ITool> data){
         FeaturesAndTraits=data;
     }
-    boolean myQyestionIsAnswered=false;
+
     @Override
     public PlayerQuestion AskQuestion() {
-        return new PlayerQuestion(qname,qoptions, new InputReader(this::SetClass));
+        if(statecounter==0){
+            return CreateClassNameQuestion();
+        }
+        if(statecounter==1){
+            return CreateSubClassesQuestion();
+        }
+        return null;
     }
     @Override
     public void NextQuestion() {
-        myQyestionIsAnswered=true;
+        statecounter++;
     }
     @Override
     public boolean IsOver() {
-        System.out.println("answer");
-        System.out.println(className);
-        return myQyestionIsAnswered;
+        return statecounter>1;
+
     }
 }
+
 
 
 class InputReader {
