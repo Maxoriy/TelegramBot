@@ -14,7 +14,6 @@ public class MultipleEntryUserQuestion implements UserQuestion{
     private int currententries;
     private boolean isfirstanswercorrect;
     Consumer<String> callback;
-
     public MultipleEntryUserQuestion(String maindescription, String secondarydescription,int entrynum, ArrayList<String>options, Consumer<String> callback){
         this.fdescr=maindescription;
         this.secdescr=secondarydescription;
@@ -31,12 +30,10 @@ public class MultipleEntryUserQuestion implements UserQuestion{
         }
         return fdescr;
     }
-
     @Override
     public ArrayList<String> getOptions() {
         return null;
     }
-
     @Override
     public boolean isAnswerCorrect(UserAnswer answer) {
         boolean flag=false;
@@ -50,7 +47,9 @@ public class MultipleEntryUserQuestion implements UserQuestion{
             isfirstanswercorrect=true;
         }
         if(flag){
+            currententries++;
             opts.removeIf(s->s.equals(answer.GetText()));
+            callback.accept(answer.GetText());
         }
         return flag;
     }
