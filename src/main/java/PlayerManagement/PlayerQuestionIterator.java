@@ -1,7 +1,7 @@
 package PlayerManagement;
 
 public interface PlayerQuestionIterator {
-    PlayerQuestion AskQuestion();
+    UserQuestion AskQuestion();
     void NextQuestion();
     boolean IsOver();
 

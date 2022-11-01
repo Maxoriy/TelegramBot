@@ -1,5 +1,6 @@
-import PlayerManagement.PlayerQuestion;
+import PlayerManagement.SingleEntryUserQuestion;
 import PlayerManagement.PlayerQuestionManager;
+import PlayerManagement.UserQuestion;
 import interfaces.UserAnswer;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
@@ -81,11 +82,11 @@ public final class Bot extends TelegramLongPollingBot {
            SendText(entry.GetChatId(), dd);
        }
     }
-    private String ConvertQuestionToString(PlayerQuestion ques){
+    private String ConvertQuestionToString(UserQuestion ques){
         StringBuilder b=new StringBuilder();
-        b.append(ques.GetQuestionName());
+        b.append(ques.getQuestionName());
         b.append("\n");
-        for (String a:ques.GetOptions()) {
+        for (String a:ques.getOptions()) {
             b.append(a);
             b.append("\n");
         }
@@ -97,7 +98,7 @@ public final class Bot extends TelegramLongPollingBot {
     }
     private void startCommandReceived(long chatId, String name) {
         SendText(chatId,"recieved");
-         users.put(chatId,new PlayerQuestionManager());
+        users.put(chatId,new PlayerQuestionManager());
 
         String dd=ConvertQuestionToString(users.get(chatId).GetCurrentQuestion());
         SendText(chatId, dd);

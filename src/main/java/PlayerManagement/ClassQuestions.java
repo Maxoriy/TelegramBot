@@ -4,7 +4,6 @@ import interfaces.DataBaseManager;
 import interfaces.ITool;
 
 import java.util.ArrayList;
-import java.util.Queue;
 import java.util.function.Consumer;
 
 public class ClassQuestions implements PlayerQuestionIterator{
@@ -14,17 +13,17 @@ public class ClassQuestions implements PlayerQuestionIterator{
     private ArrayList<ITool> FeaturesAndTraits;
     private int statecounter;
 
-    private PlayerQuestion CreateClassNameQuestion(){
-        return new PlayerQuestion("Выберите класс персонажа",DataBaseManager.getInstance().GetDataFromDB("select * from classes"),new InputReader(this::SetClass));
+    private UserQuestion CreateClassNameQuestion(){
+        return new SingleEntryUserQuestion("Выберите класс персонажа",DataBaseManager.getInstance().GetDataFromDB("select * from classes"),new InputReader(this::SetClass));
     }
-    private PlayerQuestion CreateSubClassesQuestion(){
+    private UserQuestion CreateSubClassesQuestion(){
         String statement=String.format("""
                 select classes.name, subclasses.name
                 from classes
                 join ClassToSubClass on classes.classId = ClassToSubClass.ClassId
                 join subclasses on classtosubclass.SubClassId=subclasses.classId
                 where classes.name="%s";""",className);
-        return new PlayerQuestion("Выберите подкласс своего персонажа из представленных",DataBaseManager.getInstance().GetDataFromDB(statement),new InputReader(this::SetSubClass));
+        return new SingleEntryUserQuestion("Выберите подкласс своего персонажа из представленных",DataBaseManager.getInstance().GetDataFromDB(statement),new InputReader(this::SetSubClass));
     }
 
     public ClassQuestions(){
@@ -42,7 +41,7 @@ public class ClassQuestions implements PlayerQuestionIterator{
     }
 
     @Override
-    public PlayerQuestion AskQuestion() {
+    public UserQuestion AskQuestion() {
         if(statecounter==0){
             return CreateClassNameQuestion();
         }
@@ -75,4 +74,13 @@ class InputReader {
     }
 }
 
-
+/*
+* class question(single entry from user
+* subclass question(single entry from user) -> catching abilities from class(multiple Tool answer from db) thesis: some abilities can influence on char sheet(ex competension, no armor defence, no armor movement)
+* ammunition question(multiple Tool Question from user) thesis: ammunition not only have description,but influence on main stats(ex shield add 2 cd)
+* skills question(multiple entry from user)
+* saving question()
+*
+*
+* thesis: questions with multiple entries can be implemented by reasking the same queston with removeing option that user already used
+* */

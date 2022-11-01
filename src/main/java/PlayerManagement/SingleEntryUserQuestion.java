@@ -2,23 +2,23 @@ package PlayerManagement;
 import interfaces.UserAnswer;
 import java.util.ArrayList;
 import java.util.Objects;
-public class PlayerQuestion {
+public class SingleEntryUserQuestion implements UserQuestion {
     private String QuestionName;
     private InputReader imp;
     private boolean isOver;
     private ArrayList<String> Options;
-    public PlayerQuestion(String description, ArrayList<String> options,InputReader imp){
+    public SingleEntryUserQuestion(String description, ArrayList<String> options, InputReader imp){
         this.QuestionName=description;
         this.Options=options;
         this.imp=imp;
     }
-    public String GetQuestionName(){
+    public String getQuestionName(){
         return QuestionName;
     };
-    public ArrayList<String> GetOptions(){
+    public ArrayList<String> getOptions(){
         return  Options;
     }
-    public boolean IsAnswerCorrect(UserAnswer ans){
+    public boolean isAnswerCorrect(UserAnswer ans){
         boolean flag=false;
         for (String option : Options) {
             if (Objects.equals(option, ans.GetText())) {
@@ -33,7 +33,7 @@ public class PlayerQuestion {
         }
         return false;
     }
-    public boolean IsAnswerOver(){
+    public boolean isAnswerOver(){
         return isOver;
     }
 

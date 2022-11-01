@@ -1,17 +1,18 @@
 package PlayerManagement;
 import interfaces.UserAnswer;
-import java.util.ArrayList;
-import java.util.Objects;
-    public class PlayerQuestionManager {
+
+public class PlayerQuestionManager {
     PlayerQuestionIterator[] RaceClassAndBackStory;
     int currentStage=0;
     int maxStage=0;
-    public PlayerQuestion GetCurrentQuestion(){
+    public UserQuestion GetCurrentQuestion(){
         return RaceClassAndBackStory[currentStage].AskQuestion();
     }
     public int HandleReaction(UserAnswer update){
-       if(RaceClassAndBackStory[currentStage].AskQuestion().IsAnswerCorrect(update)){
-           RaceClassAndBackStory[currentStage].NextQuestion();
+       if(RaceClassAndBackStory[currentStage].AskQuestion().isAnswerCorrect(update)){
+           if(RaceClassAndBackStory[currentStage].AskQuestion().isAnswerOver()){
+               RaceClassAndBackStory[currentStage].NextQuestion();
+           }
            if(RaceClassAndBackStory[currentStage].IsOver()){
                currentStage++;
                if(currentStage>=maxStage){
