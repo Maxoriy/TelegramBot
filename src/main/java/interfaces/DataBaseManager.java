@@ -38,5 +38,18 @@ public class DataBaseManager {
         }
         return answ;
     }
+    public ArrayList<ITool> GetToolsFromDb(String statement){
+        ArrayList<ITool> answ = new ArrayList<>();
+        try{
+            PreparedStatement stmt= dndconnector.prepareStatement(statement);
+            ResultSet ans=stmt.executeQuery();
+        }
+        catch(Exception exc){
+            exc.printStackTrace();
+        }
+        return null;
+    };
+
+
 
 }

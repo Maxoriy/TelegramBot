@@ -1,6 +1,5 @@
-import PlayerManagement.SingleEntryUserQuestion;
 import PlayerManagement.PlayerQuestionManager;
-import PlayerManagement.UserQuestion;
+import PlayerManagement.questions.UserQuestion;
 import interfaces.UserAnswer;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
@@ -33,19 +32,12 @@ public final class Bot extends TelegramLongPollingBot {
     public String getBotToken() {
         return BOT_TOKEN;
     }
-
     @Override
     public void onUpdateReceived(Update update) {
         if (update.hasMessage() && update.getMessage().hasText()){
-
             String MessageText = update.getMessage().getText();
             long chatId = update.getMessage().getChatId();
-
-            switch (MessageText) {
-                case "/start" -> startCommandReceived(chatId, update.getMessage().getChat().getFirstName());
-                case "/help" -> helpCommandReceived(chatId);
-                default -> HandleReaction(new DefaultUserAnswer(chatId,MessageText));
-            }
+            redirectEntryAndCheckState(chatId,MessageText);
         }
     }
     private void FileSendCommand(long chatId)  {
@@ -67,41 +59,21 @@ public final class Bot extends TelegramLongPollingBot {
             e.printStackTrace();
         }
     }
-    private void HandleReaction(UserAnswer entry){
-       int code=  users.get(entry.GetChatId()).HandleReaction(entry);
-
-       if(code==0){
-           FileSendCommand(entry.GetChatId());
-            users.remove(entry.GetChatId());
-       }
-       if(code==-1){
-           SendText(entry.GetChatId(),"Недопустимый вариант ответа");
-       }
-       else{
-           String dd=ConvertQuestionToString(users.get(entry.GetChatId()).GetCurrentQuestion());
-           SendText(entry.GetChatId(), dd);
-       }
-    }
-    private String ConvertQuestionToString(UserQuestion ques){
-        StringBuilder b=new StringBuilder();
-        b.append(ques.getQuestionName());
-        b.append("\n");
-        for (String a:ques.getOptions()) {
-            b.append(a);
-            b.append("\n");
+    private void redirectEntryAndCheckState(long chatId,String Message){
+       /*
+       * после того как пользователь введет что-то не может произойти выключение менеджера-> проверка на
+       * это должна быть в самом конце функции
+       * В этой функции мы должны ТОЛЬКО скармливать вводы программе, выдавать тексты с вопросами и проверять,
+       *  а не закончил ли работу менеджер
+       *
+       *
+       * */
+        users.get(chatId).update(Message);
+        SendText(chatId,users.get(chatId).GetCurrentText());
+        if(users.get(chatId).ManagerWorkEnded()){
+            FileSendCommand(chatId);
         }
-        return b.toString();
-    }
-    private void helpCommandReceived(long chatId) {
-        String answer = "In the future, here will be the help for working with the bot!";
-        SendText(chatId, answer);
-    }
-    private void startCommandReceived(long chatId, String name) {
-        SendText(chatId,"recieved");
-        users.put(chatId,new PlayerQuestionManager());
 
-        String dd=ConvertQuestionToString(users.get(chatId).GetCurrentQuestion());
-        SendText(chatId, dd);
     }
     private void SendText(long chatId, String TextToSend){
         SendMessage message = new SendMessage();

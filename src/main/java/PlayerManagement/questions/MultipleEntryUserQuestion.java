@@ -1,4 +1,4 @@
-package PlayerManagement;
+package PlayerManagement.questions;
 
 import interfaces.UserAnswer;
 
@@ -13,7 +13,7 @@ public class MultipleEntryUserQuestion implements UserQuestion{
     private int entrynum;
     private int currententries;
     private boolean isfirstanswercorrect;
-    Consumer<String> callback;
+    private Consumer<String> callback;
     public MultipleEntryUserQuestion(String maindescription, String secondarydescription,int entrynum, ArrayList<String>options, Consumer<String> callback){
         this.fdescr=maindescription;
         this.secdescr=secondarydescription;
@@ -32,7 +32,7 @@ public class MultipleEntryUserQuestion implements UserQuestion{
     }
     @Override
     public ArrayList<String> getOptions() {
-        return null;
+        return opts;
     }
     @Override
     public boolean isAnswerCorrect(UserAnswer answer) {
@@ -53,7 +53,6 @@ public class MultipleEntryUserQuestion implements UserQuestion{
         }
         return flag;
     }
-
     @Override
     public boolean isAnswerOver() {
         return entrynum <= currententries || opts.size()==0;
