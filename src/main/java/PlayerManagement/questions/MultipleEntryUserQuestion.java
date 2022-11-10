@@ -35,10 +35,15 @@ public class MultipleEntryUserQuestion implements UserQuestion{
         return opts;
     }
     @Override
-    public boolean isAnswerCorrect(UserAnswer answer) {
+    public boolean isAnswerCorrect(String answer) {
+        return opts.contains(answer);
+    }
+
+    @Override
+    public void SetAnswer(String answer) {
         boolean flag=false;
         for (String option : opts) {
-            if (Objects.equals(option, answer.GetText())) {
+            if (Objects.equals(option, answer )) {
                 flag = true;
                 break;
             }
@@ -48,11 +53,12 @@ public class MultipleEntryUserQuestion implements UserQuestion{
         }
         if(flag){
             currententries++;
-            opts.removeIf(s->s.equals(answer.GetText()));
-            callback.accept(answer.GetText());
+            opts.removeIf(s->s.equals(answer));
+            callback.accept(answer );
         }
-        return flag;
+
     }
+
     @Override
     public boolean isAnswerOver() {
         return entrynum <= currententries || opts.size()==0;

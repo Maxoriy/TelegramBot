@@ -1,4 +1,4 @@
-package interfaces;
+package Tools;
 
 public interface ITool {
     String getName();

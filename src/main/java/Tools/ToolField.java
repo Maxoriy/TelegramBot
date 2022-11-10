@@ -1,4 +1,4 @@
-package interfaces;
+package Tools;
 
 public enum ToolField {
     OtherProfAndLanguages,

@@ -1,4 +1,4 @@
-import interfaces.ITool;
+import Tools.ITool;
 
 public class Tool implements ITool {
     private String _name;

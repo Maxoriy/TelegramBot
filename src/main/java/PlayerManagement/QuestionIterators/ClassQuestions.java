@@ -1,35 +1,30 @@
-package PlayerManagement;
+package PlayerManagement.QuestionIterators;
 
+import PlayerManagement.SheetInfo.SheetInfoHolder;
 import PlayerManagement.questions.MultipleEntryUserQuestion;
 import PlayerManagement.questions.SingleEntryUserQuestion;
 import PlayerManagement.questions.UserQuestion;
 import interfaces.DataBaseManager;
-import interfaces.ITool;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
+import Tools.ITool;
 
 import java.util.ArrayList;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 public class ClassQuestions implements PlayerQuestionIterator{
-    protected String className;
-    protected String subClass;
-    protected ArrayList<ITool> FeaturesAndTraits;
-    protected ArrayList<Supplier<UserQuestion>> questionQueue;
+    protected SheetInfoHolder data;
+
+    protected ArrayList<UserQuestion> questionQueue;
     protected int currentques;
 
-    protected UserQuestion CreateClassNameQuestion(){
-        return new SingleEntryUserQuestion("Выберите класс персонажа",DataBaseManager.getInstance().GetDataFromDB("select * from classes"),this::SetClass);
-    }
+
     protected UserQuestion CreateSubClassesQuestion(){
         String statement=String.format("""
                 select classes.name, subclasses.name
                 from classes
                 join ClassToSubClass on classes.classId = ClassToSubClass.ClassId
                 join subclasses on classtosubclass.SubClassId=subclasses.classId
-                where classes.name="%s";""",className);
-        return new SingleEntryUserQuestion("Выберите подкласс своего персонажа из представленных",DataBaseManager.getInstance().GetDataFromDB(statement),this::SetSubClass);
+                where classes.name="%s";""",data.getClassName());
+        return new SingleEntryUserQuestion("Выберите подкласс своего персонажа из представленных",DataBaseManager.getInstance().GetDataFromDB(statement),this.data::setSubclassName);
     }
     protected UserQuestion CreateSkillProficiencyQuestion(){
         ArrayList<String> opts=new ArrayList<>();
@@ -45,23 +40,18 @@ public class ClassQuestions implements PlayerQuestionIterator{
         return new MultipleEntryUserQuestion(StartingQuest,SecondaryQuestion,2,opts,a);
 
     };
-    protected UserQuestion CreateEquipmentQuestion(){
-        return null;
-    }
+
     public void AddProficiency(String a){
         System.out.println(a);
     }
     public ClassQuestions(){
         currentques=0;
         questionQueue=new ArrayList<>();
-        //questionQueue.add(this::CreateClassNameQuestion);
-        //questionQueue.add(this::CreateSubClassesQuestion);
-        //questionQueue.add(this::CreateSkillProficiencyQuestion);
     }
 
     @Override
     public UserQuestion AskQuestion() {
-        return questionQueue.get(currentques).get();
+        return questionQueue.get(currentques);
     }
     @Override
     public void NextQuestion() {
@@ -71,16 +61,7 @@ public class ClassQuestions implements PlayerQuestionIterator{
     public boolean IsOver() {
         return currentques>=questionQueue.size();
     }
-    public void SetClass(String s){
-        className=s;
-    };
-    public void SetSubClass(String s){
-        subClass=s;
-    }
 
-    public void SetFeaturesAndTraits(ArrayList<ITool> data){
-        FeaturesAndTraits=data;
-    }
 
 
 }

@@ -8,38 +8,39 @@ import java.util.function.Consumer;
 public class SingleEntryUserQuestion implements UserQuestion {
     private String QuestionName;
     private Consumer<String> callback;
-    private boolean isOver;
+    private boolean isOver=false;
     private ArrayList<String> Options;
     public SingleEntryUserQuestion(String description, ArrayList<String> options, Consumer<String>  imp){
         this.QuestionName=description;
         this.Options=options;
         this.callback=imp;
     }
-    public String getQuestionName(){
-        return QuestionName;
-    };
-    public ArrayList<String> getOptions(){
-        return  Options;
-    }
-    public boolean isAnswerCorrect(UserAnswer ans){
-        boolean flag=false;
-        for (String option : Options) {
-            if (Objects.equals(option, ans.GetText())) {
-                flag = true;
-                break;
-            }
-        }
-        if(flag){
-            isOver=true;
-            callback.accept(ans.GetText());
-            return true;
-        }
-        return false;
-    }
-    public boolean isAnswerOver(){
-        return isOver;
+
+    @Override
+    public String getQuestionName() {
+        return  QuestionName;
     }
 
+    @Override
+    public ArrayList<String> getOptions() {
+        return Options;
+    }
+
+    @Override
+    public boolean isAnswerCorrect(String message) {
+        return Options.contains(message);
+    }
+
+    @Override
+    public void SetAnswer(String ans) {
+        callback.accept(ans);
+        isOver=true;
+    }
+
+    @Override
+    public boolean isAnswerOver() {
+        return isOver;
+    }
 }
 /*
 * Проблема: очень запутанная система итераторов

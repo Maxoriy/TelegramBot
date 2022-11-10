@@ -1,4 +1,4 @@
-package PlayerManagement;
+package PlayerManagement.QuestionIterators;
 
 import PlayerManagement.questions.UserQuestion;
 

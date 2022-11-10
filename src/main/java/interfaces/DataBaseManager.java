@@ -1,5 +1,7 @@
 package interfaces;
 
+import Tools.ITool;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
