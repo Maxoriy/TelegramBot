@@ -1,5 +1,4 @@
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 import interfaces.*;
@@ -25,29 +24,23 @@ public class HtmlList {
     }
 
     public static void iterReplacing(StringBuilder fileContent, Elements links, ToolIterator test, String word) {
-        System.out.println(1);
         for (Element link : links) {
             String stringLink = String.valueOf(link);
             if (stringLink.contains(word)) {
-                if (stringLink.contains("placeholder")) {
-
-                    var curr_tul = test.GetCurrent();
-                    Elements needString = link.select("textarea");
-                    StringBuilder skillValue = new StringBuilder();
-                    while (!test.IsOver()) {
-                        skillValue.append(curr_tul.getName()).append(' ');
-                        test.Next();
-                    }
-                    needString.attr("value", String.valueOf(skillValue));
-                    test.RestartIteration();
-                    String result = String.valueOf(needString);
-                    fileContent.replace(fileContent.indexOf(stringLink), fileContent.indexOf(stringLink) + stringLink.length(), result);
+                var needString = link.select("textarea").first();
+                StringBuilder skillValue = new StringBuilder();
+                while (!test.IsOver()) {
+                    skillValue.append(test.GetCurrent().getName()).append(' ');
+                    test.Next();
                 }
+                needString.text(String.valueOf(skillValue));
+                fileContent.replace(fileContent.indexOf(stringLink), fileContent.indexOf(stringLink) + stringLink.length(), String.valueOf(needString));
+
             }
         }
     }
 
-    public static void testSomething(CharInfo setInfo) {
+    public static byte[] listGeneration(CharInfo setInfo) {
         try (FileReader reader = new FileReader("C:\\Users\\Максим\\Desktop\\TGBot\\src\\main\\java\\CharacterList.html")) {
             int c;
             StringBuilder fileContent = new StringBuilder();
@@ -94,24 +87,15 @@ public class HtmlList {
 
             var test1 = setInfo.GetStringField(ToolField.OtherProfAndLanguages);
             iterReplacing(fileContent, links, test1, "OtherProfAndLanguages");
-//            var test2 = setInfo.GetStringField(ToolField.Equipment);
-//            iterReplacing(fileContent, links, test2, "Equipment");
-//            var test3 = setInfo.GetStringField(ToolField.FeaturesAndTraits);
-//            iterReplacing(fileContent, links, test3, "FeaturesAndTraits");
+            var test2 = setInfo.GetStringField(ToolField.Equipment);
+            iterReplacing(fileContent, links, test2, "Equipment");
+            var test3 = setInfo.GetStringField(ToolField.FeaturesAndTraits);
+            iterReplacing(fileContent, links, test3, "FeaturesAndTraits");
 
-            //return String.valueOf(fileContent).getBytes(StandardCharsets.UTF_8);
-            try (FileWriter writer = new FileWriter("test.html", false)) {
-                writer.write(String.valueOf(fileContent));
-            }
+            return String.valueOf(fileContent).getBytes();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-
-    public static void main(String[] args) {
-        Test data = new Test();
-        testSomething(data);
     }
 }
 
