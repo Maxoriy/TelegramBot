@@ -6,6 +6,6 @@ public enum MajorCharacteristics {
     HitPoints,
     ProficiencyBonus,
     Speed,
-    HitDice,
-    Level
+    ClassLevel,
+    HitDice
 }
