@@ -15,8 +15,6 @@ public class ClassQuestions implements PlayerQuestionIterator{
 
     protected ArrayList<UserQuestion> questionQueue;
     protected int currentques;
-
-
     protected UserQuestion CreateSubClassesQuestion(){
         String statement=String.format("""
                 select classes.name, subclasses.name
@@ -38,15 +36,15 @@ public class ClassQuestions implements PlayerQuestionIterator{
         String SecondaryQuestion="Выберите дополнительно владение из нижеперечисленных";
         Consumer<String> a=this::AddProficiency;
         return new MultipleEntryUserQuestion(StartingQuest,SecondaryQuestion,2,opts,a);
-
     };
 
     public void AddProficiency(String a){
         System.out.println(a);
     }
-    public ClassQuestions(){
+    public ClassQuestions(SheetInfoHolder dat){
         currentques=0;
         questionQueue=new ArrayList<>();
+        data=dat;
     }
 
     @Override
@@ -61,9 +59,6 @@ public class ClassQuestions implements PlayerQuestionIterator{
     public boolean IsOver() {
         return currentques>=questionQueue.size();
     }
-
-
-
 }
 
 

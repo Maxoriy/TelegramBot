@@ -21,6 +21,8 @@ public class PlayerQuestionManager implements PlayerQuestionIterator {
         starterQuestions=new ArrayList<>();
         data=new SheetInfoHolder();
         starterQuestions.add(CreateClassNameQuestion());
+        starterQuestions.add(CreateRaceNameQuestion());
+        starterQuestions.add(CreateBackStoryQuestion());
     }
 
     @Override
@@ -40,6 +42,7 @@ public class PlayerQuestionManager implements PlayerQuestionIterator {
             startQIterator++;
             if(starterQuestions.size()<=startQIterator){
                 otherq=QuestionQueuesBuilder.getInstance().CreateQueue(data);
+                System.out.println("default answers recieved");
                 userAnsweredDefaultQuestions=true;
             }
         }
@@ -60,6 +63,12 @@ public class PlayerQuestionManager implements PlayerQuestionIterator {
 
     private UserQuestion CreateClassNameQuestion(){
         return new SingleEntryUserQuestion("Выберите класс персонажа", DataBaseManager.getInstance().GetDataFromDB("select * from classes"),this.data::setClassName);
+    }
+    private UserQuestion CreateRaceNameQuestion(){
+        return new SingleEntryUserQuestion("Выберите расу персонажа", DataBaseManager.getInstance().GetDataFromDB("select * from races"),this.data::setRaceName);
+    }
+    private UserQuestion CreateBackStoryQuestion(){
+        return new SingleEntryUserQuestion("Выберите предысторию персонажа", DataBaseManager.getInstance().GetDataFromDB("select * from backstories"),this.data::setBackStoryName);
     }
 }
 

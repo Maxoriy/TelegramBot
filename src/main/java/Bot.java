@@ -60,15 +60,15 @@ public final class Bot extends TelegramLongPollingBot {
         SendText(chatId, ConvertQuestionToString(users.get(chatId).AskQuestion()));
     }
     private void onStart(long chatid){
-        System.out.println("onStartTriggered");
+
         if(users.containsKey(chatid)){
-            System.out.println("UserErased");
+
             onReset(chatid);
         }
         users.put(chatid,new PlayerQuestionManager());
-        System.out.println("userManagerCreated");
+
         if(!users.get(chatid).IsOver()){
-            System.out.println("userManagerIsCorrect");
+
             SendText(chatid,ConvertQuestionToString(users.get(chatid).AskQuestion()));
         }
         else{
@@ -114,9 +114,8 @@ public final class Bot extends TelegramLongPollingBot {
         b.append(ques.getQuestionName());
         b.append("\n");
         for (String a:ques.getOptions()) {
-            b.append("/");
             b.append(a);
-            b.append(" \n");
+            b.append("\n");
         }
         return b.toString();
     }

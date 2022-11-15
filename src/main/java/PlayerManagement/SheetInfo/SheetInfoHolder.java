@@ -8,14 +8,48 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class SheetInfoHolder {
-
+    public SheetInfoHolder(){
+        className="";
+        subclassName="";
+        raceName="";
+        backStoryName="";
+        hitpoints=0;
+        AC=0;
+        speed=0;
+        initiative=0;
+        temporaryHits=0;
+        proficiencyModifier=0;
+        characterCharacteristic=new HashMap<>();
+        characterSkillProfiecicy=new HashMap<>();
+        characterSavingThrowProficiency=new HashMap<>();
+        hitDice=0;
+        characterName="";
+        EquipProficiencies=new ArrayList<>();
+        Equipment=new ArrayList<>();
+        Abilities=new ArrayList<>();
+    }
 
     private String className;
-
-
-
     private String subclassName;
+
+    public String getRaceName() {
+        return raceName;
+    }
+
+    public void setRaceName(String raceName) {
+        this.raceName = raceName;
+    }
+
     private String raceName;
+
+    public String getBackStoryName() {
+        return backStoryName;
+    }
+
+    public void setBackStoryName(String backStoryName) {
+        this.backStoryName = backStoryName;
+    }
+
     private String backStoryName;
     private int hitpoints;
     private int AC;

@@ -13,7 +13,12 @@ public class DataBaseManager {
     private static DataBaseManager Instance;
     private DataBaseManager(){
         try {
-            dndconnector= DriverManager.getConnection("jdbc:mysql://localhost:3306/dndtest", "root", "@Cryptec03");
+
+            String dbName = "dndbotbase";
+            String dbUserName = "root";
+            String dbPassword = "@Cryptec03";
+            String connectionString = "jdbc:mysql://localhost/" + dbName + "?user=" + dbUserName + "&password=" + dbPassword + "&useUnicode=true&characterEncoding=UTF-8";
+            dndconnector= DriverManager.getConnection(connectionString);
         }
         catch (Exception exc){
             exc.printStackTrace();
@@ -51,7 +56,4 @@ public class DataBaseManager {
         }
         return null;
     };
-
-
-
 }
