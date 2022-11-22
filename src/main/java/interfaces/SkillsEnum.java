@@ -2,7 +2,7 @@ package interfaces;
 
 public enum SkillsEnum {
     Acrobatics,
-    AnimalHanding,
+    Animal,
     Arcana,
     Athletics,
     Deception,
@@ -17,6 +17,6 @@ public enum SkillsEnum {
     Religion,
     SleightOfHand,
     Stealth,
-    Survival
-
+    Survival,
+    Investigation
 }
