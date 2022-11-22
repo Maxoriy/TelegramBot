@@ -1,5 +1,4 @@
 import java.io.*;
-import java.util.Arrays;
 
 import interfaces.*;
 import org.jsoup.Jsoup;
@@ -65,7 +64,13 @@ public class HtmlList {
                 String skillValue = String.valueOf(setInfo.GetSavingThrows(en));
                 replacing(fileContent, links, skill, skillValue);
             }
+            for (MajorCharacteristic en : MajorCharacteristic.values()) {
+                String skill = String.valueOf(en);
+                String skillValue = String.valueOf(setInfo.GetMajorCharacteristic(en));
+                replacing(fileContent, links, skill, skillValue);
+            }
             String cls = String.valueOf(setInfo.GetMajorCharacteristic(MajorCharacteristic.valueOf("ClassName")));
+
             StringBuilder sth = new StringBuilder("");
             for (MajorCharacteristics en : MajorCharacteristics.values()) {
                 String skill = String.valueOf(en);
@@ -97,5 +102,6 @@ public class HtmlList {
             throw new RuntimeException(e);
         }
     }
+
 }
 

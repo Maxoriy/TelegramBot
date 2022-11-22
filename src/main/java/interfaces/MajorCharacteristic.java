@@ -1,5 +1,9 @@
 package interfaces;
 
 public enum MajorCharacteristic {
-    ClassName
+    ClassName,
+    Background,
+    Race,
+    CharacterName,
+    PlayerName
 }
