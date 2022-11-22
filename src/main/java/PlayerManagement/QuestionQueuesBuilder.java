@@ -20,7 +20,7 @@ public class QuestionQueuesBuilder {
             case "Колдун"->clss=warlockConstructor(hold);
             default -> throw new RuntimeException();
         }
-        return new SelfStorageQuestionIterator(hold, warlockConstructor(hold),warlockConstructor(hold),warlockConstructor(hold));
+        return new SelfStorageQuestionIterator(hold, clss,warlockConstructor(hold),warlockConstructor(hold));
     }
     private PlayerQuestionIterator warlockConstructor(SheetInfoHolder dat){
         return new WarlockQuestions(dat);
