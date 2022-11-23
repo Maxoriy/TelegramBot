@@ -22,16 +22,17 @@ public class HtmlList {
 
     }
 
-    public static void iterReplacing(StringBuilder fileContent, Elements links, ToolIterator test, String word) {
+    public static void iterReplacing(StringBuilder fileContent, Elements links, ToolIterator tool, String word) {
         for (Element link : links) {
             String stringLink = String.valueOf(link);
             if (stringLink.contains(word)) {
                 var needString = link.select("textarea").first();
                 StringBuilder skillValue = new StringBuilder();
-                while (!test.IsOver()) {
-                    skillValue.append(test.GetCurrent().getName()).append(' ');
-                    test.Next();
+                while (!tool.IsOver()) {
+                    skillValue.append(tool.GetCurrent().getName()).append('\n');
+                    tool.Next();
                 }
+                tool.RestartIteration();
                 needString.text(String.valueOf(skillValue));
                 fileContent.replace(fileContent.indexOf(stringLink), fileContent.indexOf(stringLink) + stringLink.length(), String.valueOf(needString));
 
@@ -90,12 +91,9 @@ public class HtmlList {
                 replacing(fileContent, links, skill, skillValue);
             }
 
-            var test1 = setInfo.GetStringField(ToolField.OtherProfAndLanguages);
-            iterReplacing(fileContent, links, test1, "OtherProfAndLanguages");
-            var test2 = setInfo.GetStringField(ToolField.Equipment);
-            iterReplacing(fileContent, links, test2, "Equipment");
-            var test3 = setInfo.GetStringField(ToolField.FeaturesAndTraits);
-            iterReplacing(fileContent, links, test3, "FeaturesAndTraits");
+            for (ToolField en : ToolField.values()) {
+                iterReplacing(fileContent, links, setInfo.GetStringField(en), String.valueOf(en));
+            }
 
             return String.valueOf(fileContent).getBytes();
         } catch (IOException e) {
