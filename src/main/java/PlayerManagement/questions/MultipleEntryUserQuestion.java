@@ -1,7 +1,5 @@
 package PlayerManagement.questions;
 
-import interfaces.UserAnswer;
-
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -54,7 +52,7 @@ public class MultipleEntryUserQuestion implements UserQuestion{
         if(flag){
             currententries++;
             opts.removeIf(s->s.equals(answer));
-            callback.accept(answer );
+            callback.accept(answer);
         }
 
     }

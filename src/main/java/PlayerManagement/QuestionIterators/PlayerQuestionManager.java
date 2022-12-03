@@ -1,10 +1,12 @@
 package PlayerManagement.QuestionIterators;
+import Enums.StatsEnum;
 import PlayerManagement.QuestionQueuesBuilder;
-import PlayerManagement.SelfStorageQuestionIterator;
 import PlayerManagement.SheetInfo.SheetInfoHolder;
+import PlayerManagement.questions.NoOptionQuestion;
 import PlayerManagement.questions.SingleEntryUserQuestion;
 import PlayerManagement.questions.UserQuestion;
-import interfaces.DataBaseManager;
+import Enums.DataBaseManager;
+import org.telegram.telegrambots.meta.api.objects.User;
 
 import java.util.ArrayList;
 
@@ -20,11 +22,17 @@ public class PlayerQuestionManager implements PlayerQuestionIterator {
     public PlayerQuestionManager(){
         starterQuestions=new ArrayList<>();
         data=new SheetInfoHolder();
+        starterQuestions.add(CreateCharacterNameQuestion());
         starterQuestions.add(CreateClassNameQuestion());
         starterQuestions.add(CreateRaceNameQuestion());
         starterQuestions.add(CreateBackStoryQuestion());
+        for (StatsEnum a:StatsEnum.values()) {
+            starterQuestions.add(CreateStrengthQuestion(a));
+        }
     }
-
+    public SheetInfoHolder getData(){
+        return data;
+    }
     @Override
     public UserQuestion AskQuestion() {
         if(!userAnsweredDefaultQuestions){
@@ -35,9 +43,6 @@ public class PlayerQuestionManager implements PlayerQuestionIterator {
 
     @Override
     public void NextQuestion() {
-        if(data.getAbilities()!=null && data.getAbilities().size()!=0){
-            System.out.println(data.getAbilities().get(0));
-        }
         if(!userAnsweredDefaultQuestions){
             startQIterator++;
             if(starterQuestions.size()<=startQIterator){
@@ -47,6 +52,7 @@ public class PlayerQuestionManager implements PlayerQuestionIterator {
             }
         }
         else{
+
             otherq.NextQuestion();
         }
     }
@@ -56,20 +62,34 @@ public class PlayerQuestionManager implements PlayerQuestionIterator {
         if(!userAnsweredDefaultQuestions){
             return startQIterator>=starterQuestions.size();
         }
-        else{
-            return otherq.IsOver();
-        }
-    }
 
+        if(otherq.IsOver()) {
+            fetchAbilitiesAndEquipmentFromDatabase();
+
+        }
+        return otherq.IsOver();
+
+    }
+    private void fetchAbilitiesAndEquipmentFromDatabase(){
+        //todo implement fetching from the database
+    }
     private UserQuestion CreateClassNameQuestion(){
-        return new SingleEntryUserQuestion("Выберите класс персонажа", DataBaseManager.getInstance().GetDataFromDB("select * from classes"),this.data::setClassName);
+        return new SingleEntryUserQuestion("Выберите класс персонажа", DataBaseManager.getInstance().GetDataFromDB("select * from classes"),this.data.naming::setClassName);
     }
     private UserQuestion CreateRaceNameQuestion(){
-        return new SingleEntryUserQuestion("Выберите расу персонажа", DataBaseManager.getInstance().GetDataFromDB("select * from races"),this.data::setRaceName);
+        return new SingleEntryUserQuestion("Выберите расу персонажа", DataBaseManager.getInstance().GetDataFromDB("select * from races"),this.data.naming :: setRaceName);
     }
     private UserQuestion CreateBackStoryQuestion(){
-        return new SingleEntryUserQuestion("Выберите предысторию персонажа", DataBaseManager.getInstance().GetDataFromDB("select * from backstories"),this.data::setBackStoryName);
+        return new SingleEntryUserQuestion("Выберите предысторию персонажа", DataBaseManager.getInstance().GetDataFromDB("select * from backstories"),this.data.naming ::setBackStoryName);
     }
+    private UserQuestion CreateCharacterNameQuestion(){
+        return new NoOptionQuestion("Выберите имя персонажа",(st)->{data.naming.characterName=st;});
+    }
+    private UserQuestion CreateStrengthQuestion(StatsEnum skill){
+        return new NoOptionQuestion( new StringBuilder().append("Введите значение от 3 до 18, для характеристики:").append(skill.getName()).toString(),
+        (ans)->{data.numbers.StatValue.put(skill,Integer.parseInt(ans));});
+    }
+
 }
 
 /*

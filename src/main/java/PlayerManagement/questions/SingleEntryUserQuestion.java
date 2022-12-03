@@ -1,8 +1,6 @@
 package PlayerManagement.questions;
 
-import interfaces.UserAnswer;
 import java.util.ArrayList;
-import java.util.Objects;
 import java.util.function.Consumer;
 
 public class SingleEntryUserQuestion implements UserQuestion {

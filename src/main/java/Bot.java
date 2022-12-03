@@ -1,4 +1,7 @@
+import PDFListGeneration.HtmlList;
 import PlayerManagement.QuestionIterators.PlayerQuestionManager;
+import PlayerManagement.SheetInfo.InfoAdapter;
+import PlayerManagement.SheetInfo.SheetInfoHolder;
 import PlayerManagement.questions.UserQuestion;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
@@ -54,7 +57,7 @@ public final class Bot extends TelegramLongPollingBot {
         uq.SetAnswer(MessageText);
         users.get(chatId).NextQuestion();
         if(users.get(chatId).IsOver()){
-            FileSendCommand(chatId);
+            FileSendCommand(chatId,users.get(chatId).getData());
             onReset(chatId);
         }
         SendText(chatId, ConvertQuestionToString(users.get(chatId).AskQuestion()));
@@ -79,18 +82,17 @@ public final class Bot extends TelegramLongPollingBot {
         users.remove(chatid);
     };
 
-    private void FileSendCommand(long chatId)  {
+    private void FileSendCommand(long chatId, SheetInfoHolder info)  {
 
         SendDocument message=new SendDocument();
-        File initfile=new File("C:/Users/as-pa/IdeaProjects/TelegramBot/src/main/dororo.txt");
+        //File initfile=new File("C:/Users/as-pa/IdeaProjects/TelegramBot/src/main/dororo.txt");
         message.setChatId(chatId);
-        try {
-            InputStream ff = new FileInputStream(initfile);
 
-            InputFile f = new InputFile(ff, "dororo.txt");
+            InputStream ff = new ByteArrayInputStream(HtmlList.listGeneration(new InfoAdapter(info)));
+
+            InputFile f = new InputFile(ff, "dororo.html");
             message.setDocument(f);
-        }
-        catch (FileNotFoundException e){e.printStackTrace();}
+
         try {
             execute(message);
         }
