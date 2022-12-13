@@ -9,6 +9,7 @@ import Enums.DataBaseManager;
 import org.telegram.telegrambots.meta.api.objects.User;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 
 public class PlayerQuestionManager implements PlayerQuestionIterator {
@@ -26,6 +27,7 @@ public class PlayerQuestionManager implements PlayerQuestionIterator {
         starterQuestions.add(CreateClassNameQuestion());
         starterQuestions.add(CreateRaceNameQuestion());
         starterQuestions.add(CreateBackStoryQuestion());
+        starterQuestions.add(createLevelQ());
         for (StatsEnum a:StatsEnum.values()) {
             starterQuestions.add(CreateStrengthQuestion(a));
         }
@@ -45,6 +47,9 @@ public class PlayerQuestionManager implements PlayerQuestionIterator {
     public void NextQuestion() {
         if(!userAnsweredDefaultQuestions){
             startQIterator++;
+            if(startQIterator==11){
+                System.out.println("1123");
+            }
             if(starterQuestions.size()<=startQIterator){
                 otherq=QuestionQueuesBuilder.getInstance().CreateQueue(data);
                 System.out.println("default answers recieved");
@@ -63,15 +68,9 @@ public class PlayerQuestionManager implements PlayerQuestionIterator {
             return startQIterator>=starterQuestions.size();
         }
 
-        if(otherq.IsOver()) {
-            fetchAbilitiesAndEquipmentFromDatabase();
 
-        }
         return otherq.IsOver();
 
-    }
-    private void fetchAbilitiesAndEquipmentFromDatabase(){
-        //todo implement fetching from the database
     }
     private UserQuestion CreateClassNameQuestion(){
         return new SingleEntryUserQuestion("Выберите класс персонажа", DataBaseManager.getInstance().GetDataFromDB("select * from classes"),this.data.naming::setClassName);
@@ -84,6 +83,12 @@ public class PlayerQuestionManager implements PlayerQuestionIterator {
     }
     private UserQuestion CreateCharacterNameQuestion(){
         return new NoOptionQuestion("Выберите имя персонажа",(st)->{data.naming.characterName=st;});
+    }
+    private UserQuestion createLevelQ(){
+        return new SingleEntryUserQuestion("Выберите уровень персонажа",
+                new ArrayList<String>(Arrays.asList("1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20")),
+                (St)->{data.gameNums.level=Integer.parseInt(St);});
+
     }
     private UserQuestion CreateStrengthQuestion(StatsEnum skill){
         return new NoOptionQuestion( new StringBuilder().append("Введите значение от 3 до 18, для характеристики:").append(skill.getName()).toString(),

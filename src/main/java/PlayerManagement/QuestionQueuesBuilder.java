@@ -38,7 +38,7 @@ public class QuestionQueuesBuilder {
         }
         switch (hold.naming.raceName){
             case "Гном"->rss=new Gnomee(hold);
-            case "Дворф"->rss=new BeerMan(hold);
+            case "Дварф"->rss=new BeerMan(hold);
             case "Драконорожденный"->rss=new DragonBorn(hold);
             case "Полуорк"->rss=new HalfOrc(hold);
             case "Полурослик"->rss=new HalfOrc(hold);

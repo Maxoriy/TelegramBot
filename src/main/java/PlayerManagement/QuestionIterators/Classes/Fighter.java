@@ -2,6 +2,10 @@ package PlayerManagement.QuestionIterators.Classes;
 
 
 import Enums.*;
+import PlayerManagement.QuestionIterators.BackStories.BackStoryTemplate;
+import PlayerManagement.QuestionIterators.Subclasses.MysticKnight;
+import PlayerManagement.QuestionIterators.Subclasses.WarrirorChampion;
+import PlayerManagement.QuestionIterators.Subclasses.WeaponMaster;
 import PlayerManagement.SheetInfo.SheetInfoHolder;
 import PlayerManagement.questions.*;
 import Tools.DefaultTool;
@@ -10,6 +14,7 @@ import Tools.ITool;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Objects;
 
 public class Fighter extends ClassQuestions {
@@ -27,6 +32,44 @@ public class Fighter extends ClassQuestions {
         EquipmentQ2();
         EquipmentQ3();
         EquipmentQ4();
+
+        BattleStyleQ();
+
+        int lvl=data.gameNums.level;
+
+        data.toolLists.Abilities.add(new DefaultTool("Второе дыхание","Вы обладаете ограниченным источником выносливости, которым можете воспользоваться, чтобы уберечь себя. В свой ход вы можете бонусным действием восстановить хиты в размере 1к10 + ваш уровень воина.\n" +
+                "\n" +
+                "Использовав это умение, вы должны завершить короткий либо продолжительный отдых, чтобы получить возможность использовать его снова."));
+        if(lvl<2){return;}
+        data.toolLists.Abilities.add(new DefaultTool("Всплеск действий","Вы получаете возможность на мгновение преодолеть обычные возможности. В свой ход вы можете совершить одно дополнительное действие помимо обычного и бонусного действий. Использовав это умение, вы должны завершить короткий или продолжительный отдых, чтобы получить возможность использовать его снова. Начиная с 17-го уровня, вы можете использовать это умение дважды, прежде чем вам понадобится отдых, но в течение одного хода его всё равно можно использовать лишь один раз."));
+        if(lvl<4){return;}
+        ImproveCharacteristicQ();
+        if(lvl<5){return;}
+
+        data.toolLists.Abilities.add(new DefaultTool("Дополнительная атака","Если вы в свой ход совершаете действие Атака, вы можете совершить две атаки вместо одной.\n" +
+                "\n" +
+                "Количество атак увеличивается до трёх на 11-м уровне этого класса, и до четырёх на 20-м уровне."));
+
+        if(lvl<6){return;}
+        ImproveCharacteristicQ();
+        if(lvl<8){return;}
+        ImproveCharacteristicQ();
+
+        if(lvl<9){return;}
+
+        data.toolLists.Abilities.add(new DefaultTool("Упорный","Вы можете перебросить проваленный спасбросок и должны использовать новый результат. После этого вы можете повторно использовать это умение только после завершения продолжительного отдыха.\n" +
+                "\n" +
+                "Вы можете использовать это умение дважды между периодами продолжительного отдыха после достижения 13-го уровня, и трижды после достижения 17-го уровня.\n" +
+                "\n"));
+
+        if(lvl<12){return;}
+        ImproveCharacteristicQ();
+        if(lvl<14){return;}
+        ImproveCharacteristicQ();
+        if(lvl<16){return;}
+        ImproveCharacteristicQ();
+        if(lvl<19){return;}
+        ImproveCharacteristicQ();
     }
     private void Skillq(){
         ArrayList<SkillsEnum>opts=new ArrayList<>();
@@ -122,6 +165,37 @@ public class Fighter extends ClassQuestions {
                 new ArrayList<>(Arrays.asList(new EquipmentOption(1, Kits.DungeonExplorer),new EquipmentOption(1,Kits.Traveller))),
                 data.toolLists::AddEquipment
         ));
+    }
+    private void BattleStyleQ(){
+        HashMap<String,String> a=new HashMap<>();
+        a.put("Дуэлянт","Пока вы держите рукопашное оружие в одной руке и не используете другого оружия, вы получаете бонус +2 к броскам урона этим оружием.");
+        a.put("Защита","Если существо, которое вы видите, атакует не вас, а другое существо, находящееся в пределах 5 футов от вас, вы можете реакцией создать помеху его броску атаки. Для этого вы должны использовать щит.");
+        a.put("Оборона","Пока вы носите доспехи, вы получаете бонус +1 к КД.");
+        a.put("Сражение большим оружием","Если у вас выпало «1» или «2» на кости урона оружия при атаке, которую вы совершали рукопашным оружием, удерживая его двумя руками, то вы можете перебросить эту кость, и должны использовать новый результат, даже если снова выпало «1» или «2». Чтобы воспользоваться этим преимуществом, ваше оружие должно иметь свойство « двуручное» или «универсальное».");
+        a.put("Сражение двумя оружиями","Если вы сражаетесь двумя оружиями, вы можете добавить модификатор характеристики к урону от второй атаки.");
+        a.put("Стрельба","Вы получаете бонус +2 к броску атаки, когда атакуете дальнобойным оружием.");
+        questionQueue.add(new SingleEntryUserQuestion("Выберите боевой стиль из представленных",new ArrayList<>(a.keySet()),
+                (s)->{
+                    data.toolLists.Abilities.add(new DefaultTool(s,a.get(s)));
+                } ));
+    }
+
+    private void SubClassQ(){
+        if(data.gameNums.level<3){return;}
+        questionQueue.add(new SingleEntryUserQuestion("Выберите подкласс",new ArrayList<>(Arrays.asList("Мастер боевых искусств","Мистический рыцарь","Чемпион")),
+                (a)->{
+                    if(Objects.equals(a, "Мастер боевых искусств")){
+                        BackStoryTemplate sub=new WeaponMaster(data,questionQueue);
+                    }
+                    if(Objects.equals(a, "Мистический рыцарь")){
+                        BackStoryTemplate sub=new MysticKnight(data,questionQueue);
+                    }
+                    if(Objects.equals(a, "Чемпион")){
+                        BackStoryTemplate sub=new WarrirorChampion(data,questionQueue);
+                    }
+                }
+
+                ));
     }
 
 
