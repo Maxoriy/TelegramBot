@@ -43,8 +43,8 @@ public class DragonBorn extends BackStoryTemplate {
                  }
              }
             public String getstr(){
-                 return nme+"Вид урона: "+TypeOfDamage+" Вид оружия дыхания: "+TypeOfBreath;
-            }
+                 return nme;
+            } //+"Вид урона: "+TypeOfDamage+" Вид оружия дыхания: "+TypeOfBreath;
              public String nme;
             public String TypeOfDamage;
             public String TypeOfBreath;

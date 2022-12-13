@@ -5,9 +5,9 @@ import PlayerManagement.SheetInfo.SheetInfoHolder;
 import PlayerManagement.questions.NoOptionQuestion;
 import PlayerManagement.questions.SingleEntryUserQuestion;
 import PlayerManagement.questions.UserQuestion;
-import Enums.DataBaseManager;
-import org.telegram.telegrambots.meta.api.objects.User;
+import org.checkerframework.checker.units.qual.A;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -70,13 +70,58 @@ public class PlayerQuestionManager implements PlayerQuestionIterator {
 
     }
     private UserQuestion CreateClassNameQuestion(){
-        return new SingleEntryUserQuestion("Выберите класс персонажа", DataBaseManager.getInstance().GetDataFromDB("select * from classes"),this.data.naming::setClassName);
+        return new SingleEntryUserQuestion("Выберите класс персонажа",
+                new ArrayList<>(Arrays.asList(
+                        "Бард",
+                        "Варвар",
+                        "Воин",
+                        "Волшебник",
+                        "Друид",
+                        "Жрец",
+                        "Колдун",
+                        "Монах",
+                        "Паладин",
+                        "Плут",
+                        "Следопыт",
+                        "Чародей"
+                )),this.data.naming::setClassName);
     }
     private UserQuestion CreateRaceNameQuestion(){
-        return new SingleEntryUserQuestion("Выберите расу персонажа", DataBaseManager.getInstance().GetDataFromDB("select * from races"),this.data.naming :: setRaceName);
+        return new SingleEntryUserQuestion("Выберите расу персонажа",
+                new ArrayList<>(Arrays.asList(
+                        "Гном",
+                        "Дварф",
+                        "Драконорожденный",
+                        "Полуорк",
+                        "Полурослик",
+                        "Полуэльф",
+                        "Тифлинг",
+                        "Человек",
+                        "Эльф"
+
+                        ))
+                ,this.data.naming :: setRaceName);
     }
     private UserQuestion CreateBackStoryQuestion(){
-        return new SingleEntryUserQuestion("Выберите предысторию персонажа", DataBaseManager.getInstance().GetDataFromDB("select * from backstories"),this.data.naming ::setBackStoryName);
+        return new SingleEntryUserQuestion("Выберите предысторию персонажа",
+                new ArrayList<>(Arrays.asList(
+                        "Артист",
+                        "Беспризорник",
+                        "Благородный",
+                        "Гильдейский ремесленник",
+                        "Моряк",
+                        "Мудрец",
+                        "Народный герой",
+                        "Отшельник",
+                        "Преступник",
+                        "Прислужник",
+                        "Солдат",
+                        "Чужеземец",
+                        "Шарлатан"
+                        ))
+
+
+                ,this.data.naming ::setBackStoryName);
     }
     private UserQuestion CreateCharacterNameQuestion(){
         return new NoOptionQuestion("Выберите имя персонажа",(st)->{data.naming.characterName=st;});

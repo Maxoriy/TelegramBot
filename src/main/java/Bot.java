@@ -136,9 +136,11 @@ public final class Bot extends TelegramLongPollingBot {
         message.setText(ques.getQuestionName());
         InlineKeyboardMarkup markup=new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rows =new ArrayList<>();
+
         for (String a:ques.getOptions()) {
             List<InlineKeyboardButton> rowInline = new ArrayList<>();
             var but=new InlineKeyboardButton();
+            System.out.println(a);
             but.setText(a);
             but.setCallbackData(a);
             rowInline.add(but);
@@ -146,6 +148,9 @@ public final class Bot extends TelegramLongPollingBot {
         }
         markup.setKeyboard(rows);
         message.setReplyMarkup(markup);
+        if(message.getText().equals("выберите свое наследие дракона")){
+            System.out.println(1);
+        }
         try {
             execute(message);
         } catch (TelegramApiException e) {
