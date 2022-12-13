@@ -47,9 +47,6 @@ public class PlayerQuestionManager implements PlayerQuestionIterator {
     public void NextQuestion() {
         if(!userAnsweredDefaultQuestions){
             startQIterator++;
-            if(startQIterator==11){
-                System.out.println("1123");
-            }
             if(starterQuestions.size()<=startQIterator){
                 otherq=QuestionQueuesBuilder.getInstance().CreateQueue(data);
                 System.out.println("default answers recieved");

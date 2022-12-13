@@ -8,10 +8,14 @@ import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 
 public final class Bot extends TelegramLongPollingBot {
@@ -37,30 +41,45 @@ public final class Bot extends TelegramLongPollingBot {
     }
     @Override
     public void onUpdateReceived(Update update) {
-        if (!(update.hasMessage() && update.getMessage().hasText())){
-            return;
+        String MessageText = "";
+        long chatId=0;
+        if(update.hasCallbackQuery()){
+            MessageText=update.getCallbackQuery().getData();
+            chatId=update.getCallbackQuery().getMessage().getChatId();
+            System.out.println(MessageText);
+            if(Objects.equals(MessageText, "Варвар")){
+                System.out.println(1);
+            }
         }
-        String MessageText = update.getMessage().getText();
-        long chatId = update.getMessage().getChatId();
+        if(update.hasMessage()){
+            MessageText=update.getMessage().getText();
+            chatId=update.getMessage().getChatId();
+        }
+
+        if(Objects.equals(MessageText, "")){return;}
+
+
         switch (MessageText){
             case "/start"->onStart(chatId);
             case "/restart"->onReset(chatId);
             default -> Update(chatId,MessageText);
         }
-    }
+        }
     private void Update(long chatId, String MessageText){
+
         UserQuestion uq=users.get(chatId).AskQuestion();
         if(!uq.isAnswerCorrect(MessageText)){
             SendText(chatId,"Неверный ввод");
             return;
         }
+
         uq.SetAnswer(MessageText);
         users.get(chatId).NextQuestion();
         if(users.get(chatId).IsOver()){
             FileSendCommand(chatId,users.get(chatId).getData());
             onReset(chatId);
         }
-        SendText(chatId, ConvertQuestionToString(users.get(chatId).AskQuestion()));
+        SendButtonQ(chatId, users.get(chatId).AskQuestion());
     }
     private void onStart(long chatid){
 
@@ -72,7 +91,7 @@ public final class Bot extends TelegramLongPollingBot {
 
         if(!users.get(chatid).IsOver()){
 
-            SendText(chatid,ConvertQuestionToString(users.get(chatid).AskQuestion()));
+            SendButtonQ(chatid,users.get(chatid).AskQuestion());
         }
         else{
             SendText(chatid,"Список вопросов для вас пуст");
@@ -85,7 +104,6 @@ public final class Bot extends TelegramLongPollingBot {
     private void FileSendCommand(long chatId, SheetInfoHolder info)  {
 
         SendDocument message=new SendDocument();
-        //File initfile=new File("C:/Users/as-pa/IdeaProjects/TelegramBot/src/main/dororo.txt");
         message.setChatId(chatId);
 
             InputStream ff = new ByteArrayInputStream(HtmlList.listGeneration(new InfoAdapter(info)));
@@ -108,6 +126,29 @@ public final class Bot extends TelegramLongPollingBot {
         try{
             execute(message);
         } catch (TelegramApiException e){
+            e.printStackTrace();
+        }
+    }
+
+    private void SendButtonQ(long chatid, UserQuestion ques){
+        SendMessage message=new SendMessage();
+        message.setChatId(chatid);
+        message.setText(ques.getQuestionName());
+        InlineKeyboardMarkup markup=new InlineKeyboardMarkup();
+        List<List<InlineKeyboardButton>> rows =new ArrayList<>();
+        for (String a:ques.getOptions()) {
+            List<InlineKeyboardButton> rowInline = new ArrayList<>();
+            var but=new InlineKeyboardButton();
+            but.setText(a);
+            but.setCallbackData(a);
+            rowInline.add(but);
+            rows.add(rowInline);
+        }
+        markup.setKeyboard(rows);
+        message.setReplyMarkup(markup);
+        try {
+            execute(message);
+        } catch (TelegramApiException e) {
             e.printStackTrace();
         }
     }
