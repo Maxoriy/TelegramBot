@@ -1,3 +1,5 @@
+import PDFListGeneration.AbilitiesDescription;
+import PDFListGeneration.AbilitiesDescription;
 import PDFListGeneration.HtmlList;
 import PlayerManagement.QuestionIterators.PlayerQuestionManager;
 import PlayerManagement.SheetInfo.InfoAdapter;
@@ -22,12 +24,13 @@ public final class Bot extends TelegramLongPollingBot {
 
     private final String BOT_TOKEN;
     private final String BOT_NAME;
-    private HashMap<Long,PlayerQuestionManager> users;
+    private HashMap<Long, PlayerQuestionManager> users;
+
     public Bot(String BOT_NAME, String BOT_TOKEN) {
         super();
         this.BOT_NAME = BOT_NAME;
         this.BOT_TOKEN = BOT_TOKEN;
-        this.users=new HashMap<>();
+        this.users = new HashMap<>();
     }
 
     @Override
@@ -39,107 +42,131 @@ public final class Bot extends TelegramLongPollingBot {
     public String getBotToken() {
         return BOT_TOKEN;
     }
+
     @Override
     public void onUpdateReceived(Update update) {
         String MessageText = "";
-        long chatId=0;
-        if(update.hasCallbackQuery()){
-            MessageText=update.getCallbackQuery().getData();
-            chatId=update.getCallbackQuery().getMessage().getChatId();
+        long chatId = 0;
+        if (update.hasCallbackQuery()) {
+            MessageText = update.getCallbackQuery().getData();
+            chatId = update.getCallbackQuery().getMessage().getChatId();
             System.out.println(MessageText);
-            if(Objects.equals(MessageText, "Варвар")){
+            if (Objects.equals(MessageText, "Варвар")) {
                 System.out.println(1);
             }
         }
-        if(update.hasMessage()){
-            MessageText=update.getMessage().getText();
-            chatId=update.getMessage().getChatId();
+        if (update.hasMessage()) {
+            MessageText = update.getMessage().getText();
+            chatId = update.getMessage().getChatId();
         }
 
-        if(Objects.equals(MessageText, "")){return;}
-
-
-        switch (MessageText){
-            case "/start"->onStart(chatId);
-            case "/restart"->onReset(chatId);
-            default -> Update(chatId,MessageText);
+        if (Objects.equals(MessageText, "")) {
+            return;
         }
-        }
-    private void Update(long chatId, String MessageText){
 
-        UserQuestion uq=users.get(chatId).AskQuestion();
-        if(!uq.isAnswerCorrect(MessageText)){
-            SendText(chatId,"Неверный ввод");
+
+        switch (MessageText) {
+            case "/start" -> onStart(chatId);
+            case "/restart" -> onReset(chatId);
+            default -> Update(chatId, MessageText);
+        }
+    }
+
+    private void Update(long chatId, String MessageText) {
+
+        UserQuestion uq = users.get(chatId).AskQuestion();
+        if (!uq.isAnswerCorrect(MessageText)) {
+            SendText(chatId, "Неверный ввод");
             return;
         }
 
         uq.SetAnswer(MessageText);
         users.get(chatId).NextQuestion();
-        if(users.get(chatId).IsOver()){
-            FileSendCommand(chatId,users.get(chatId).getData());
+        if (users.get(chatId).IsOver()) {
+            FileSendCommand(chatId, users.get(chatId).getData());
+            DescriptionFile(chatId, users.get(chatId).getData());
             onReset(chatId);
         }
         SendButtonQ(chatId, users.get(chatId).AskQuestion());
     }
-    private void onStart(long chatid){
 
-        if(users.containsKey(chatid)){
+    private void onStart(long chatid) {
+
+        if (users.containsKey(chatid)) {
 
             onReset(chatid);
         }
-        users.put(chatid,new PlayerQuestionManager());
+        users.put(chatid, new PlayerQuestionManager());
 
-        if(!users.get(chatid).IsOver()){
+        if (!users.get(chatid).IsOver()) {
 
-            SendButtonQ(chatid,users.get(chatid).AskQuestion());
+            SendButtonQ(chatid, users.get(chatid).AskQuestion());
+        } else {
+            SendText(chatid, "Список вопросов для вас пуст");
         }
-        else{
-            SendText(chatid,"Список вопросов для вас пуст");
-        }
-    };
-    private void onReset(long chatid){
+    }
+
+    ;
+
+    private void onReset(long chatid) {
         users.remove(chatid);
-    };
+    }
 
-    private void FileSendCommand(long chatId, SheetInfoHolder info)  {
+    ;
 
-        SendDocument message=new SendDocument();
+    private void DescriptionFile(long chatId, SheetInfoHolder info) {
+        SendDocument message = new SendDocument();
         message.setChatId(chatId);
-
-            InputStream ff = new ByteArrayInputStream(HtmlList.listGeneration(new InfoAdapter(info)));
-
-            InputFile f = new InputFile(ff, "dororo.html");
-            message.setDocument(f);
-
+        InputStream gg = new ByteArrayInputStream(AbilitiesDescription.addDescription(new InfoAdapter(info)));
+        InputFile g = new InputFile(gg, "dororo.txt");
+        message.setDocument(g);
         try {
             execute(message);
-        }
-        catch (TelegramApiException e){
+        } catch (TelegramApiException e) {
             e.printStackTrace();
         }
     }
-    private void SendText(long chatId, String TextToSend){
+
+    private void FileSendCommand(long chatId, SheetInfoHolder info) {
+
+        SendDocument message = new SendDocument();
+        message.setChatId(chatId);
+
+        InputStream ff = new ByteArrayInputStream(HtmlList.listGeneration(new InfoAdapter(info)));
+        InputFile f = new InputFile(ff, "dororo.html");
+
+        message.setDocument(f);
+
+
+        try {
+            execute(message);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void SendText(long chatId, String TextToSend) {
         SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(chatId));
         message.setText(TextToSend);
 
-        try{
+        try {
             execute(message);
-        } catch (TelegramApiException e){
+        } catch (TelegramApiException e) {
             e.printStackTrace();
         }
     }
 
-    private void SendButtonQ(long chatid, UserQuestion ques){
-        SendMessage message=new SendMessage();
+    private void SendButtonQ(long chatid, UserQuestion ques) {
+        SendMessage message = new SendMessage();
         message.setChatId(chatid);
         message.setText(ques.getQuestionName());
-        InlineKeyboardMarkup markup=new InlineKeyboardMarkup();
-        List<List<InlineKeyboardButton>> rows =new ArrayList<>();
+        InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
+        List<List<InlineKeyboardButton>> rows = new ArrayList<>();
 
-        for (String a:ques.getOptions()) {
+        for (String a : ques.getOptions()) {
             List<InlineKeyboardButton> rowInline = new ArrayList<>();
-            var but=new InlineKeyboardButton();
+            var but = new InlineKeyboardButton();
             System.out.println(a);
             but.setText(a);
             but.setCallbackData(a);
@@ -148,7 +175,7 @@ public final class Bot extends TelegramLongPollingBot {
         }
         markup.setKeyboard(rows);
         message.setReplyMarkup(markup);
-        if(message.getText().equals("выберите свое наследие дракона")){
+        if (message.getText().equals("выберите свое наследие дракона")) {
             System.out.println(1);
         }
         try {
@@ -157,11 +184,12 @@ public final class Bot extends TelegramLongPollingBot {
             e.printStackTrace();
         }
     }
-    private String ConvertQuestionToString(UserQuestion ques){
-        StringBuilder b=new StringBuilder();
+
+    private String ConvertQuestionToString(UserQuestion ques) {
+        StringBuilder b = new StringBuilder();
         b.append(ques.getQuestionName());
         b.append("\n");
-        for (String a:ques.getOptions()) {
+        for (String a : ques.getOptions()) {
             b.append(a);
             b.append("\n");
         }

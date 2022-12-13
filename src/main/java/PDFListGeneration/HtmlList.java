@@ -9,6 +9,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
 public class HtmlList {
     public static void replacing(StringBuilder fileContent, Elements links, String skill, String skillValue) {
         for (Element link : links) {
@@ -16,7 +17,12 @@ public class HtmlList {
             if (stringLink.contains(skill)) {
                 if (stringLink.contains("placeholder")) {
                     Elements needString = link.select("input");
-                    needString.attr("value", skillValue);
+                    if (stringLink.contains("mod")) {
+                        var value = (Integer.parseInt(skillValue) - 10) / 2;
+                        needString.attr("value", String.valueOf(value));
+                    } else {
+                        needString.attr("value", skillValue);
+                    }
                     String result = String.valueOf(needString);
                     fileContent.replace(fileContent.indexOf(stringLink), fileContent.indexOf(stringLink) + stringLink.length(), result);
                 }
